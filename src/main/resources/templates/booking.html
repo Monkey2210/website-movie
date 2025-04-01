@@ -1,0 +1,67 @@
+<!DOCTYPE html>
+<html lang="vi">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Đặt Vé Xem Phim</title>
+    <link rel="stylesheet" href="/css/booking.css">
+</head>
+<body>
+    <div class="container">
+        <div class="movie-info-section">
+            <div class="trailer-container">
+                <div class="video-wrapper">
+                    <iframe id="trailerFrame" frameborder="0" allowfullscreen></iframe>
+                </div>
+            </div>
+            <div class="movie-details">
+                <h1 id="movieTitle">Đang tải thông tin phim...</h1>
+                <p id="movieOverview" class="overview"></p>
+                <div class="meta-info">
+                    <span id="releaseDate"></span>
+                    <span id="runtime"></span>
+                    <span id="rating"></span>
+                </div>
+            </div>
+        </div>
+
+        <div class="booking-section">
+            <h2>Đặt Vé</h2>
+            <form id="bookingForm" action="/book" method="POST">
+                <input type="hidden" id="movieId" name="movieId">
+                
+                <div class="form-group">
+                    <label for="showtime">Chọn Suất Chiếu:</label>
+                    <input type="datetime-local" id="showtime" name="showtime" required>
+                </div>
+
+                <div class="form-group">
+                    <label for="seats">Số Lượng Vé:</label>
+                    <select id="seats" name="seats" required>
+                        <option value="">Chọn số lượng</option>
+                        <option value="1">1 vé</option>
+                        <option value="2">2 vé</option>
+                        <option value="3">3 vé</option>
+                        <option value="4">4 vé</option>
+                        <option value="5">5 vé</option>
+                    </select>
+                </div>
+
+                <div class="form-group">
+                    <label for="price">Giá Vé:</label>
+                    <input type="number" id="price" name="price" readonly>
+                </div>
+
+                <div class="form-group">
+                    <label for="total">Tổng Tiền:</label>
+                    <input type="text" id="total" readonly>
+                </div>
+
+                <button type="submit" class="submit-btn">Xác Nhận Đặt Vé</button>
+            </form>
+        </div>
+    </div>
+
+    <script src="/js/booking.js"></script>
+</body>
+</html>

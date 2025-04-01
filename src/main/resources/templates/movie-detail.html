@@ -1,0 +1,21 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Movie Details</title>
+</head>
+<body>
+<h1 th:text="${movie.title}"></h1>
+<p th:text="${movie.overview}"></p>
+<img th:src="'https://image.tmdb.org/t/p/w500/' + ${movie.posterPath}" alt="Movie Poster">
+
+<!-- Hiển thị trailer -->
+<div>
+    <h2>Trailer</h2>
+    <iframe th:src="'https://www.youtube.com/embed/' + ${movie.trailerKey}" width="560" height="315"></iframe>
+</div>
+
+<a href="/booking">Book a Ticket</a>
+</body>
+</html>

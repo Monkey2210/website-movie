@@ -1,0 +1,63 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <link rel="stylesheet" href="/css/styles.css">
+    <title>Movie List</title>
+</head>
+<body>
+    <header>
+        <div class="container">
+            <nav class="nav-menu">
+                <div class="logo">
+                    <a href="/">MovieTime</a>
+                </div>
+                <ul class="menu-items">
+                    <li><a href="/">Trang Chủ</a></li>
+                    <li class="dropdown">
+                        <a href="#">Thể Loại</a>
+                        <div class="dropdown-content" id="genreDropdown">
+                            <!-- Will be populated by JavaScript -->
+                        </div>
+                    </li>
+                    <li><a href="/upcoming">Sắp Chiếu</a></li>
+                    <li><a href="/top-rated">Phim Hay</a></li>
+                    <li class="dropdown">
+                        <a href="#">Diễn Viên</a>
+                        <div class="dropdown-content" id="actorsDropdown">
+                            <!-- Will be populated by JavaScript -->
+                        </div>
+                    </li>
+                </ul>
+            </nav>
+            <div class="search-bar">
+                <input type="text" placeholder="Tìm kiếm phim...">
+            </div>
+        </div>
+    </header>
+
+    <main class="container">
+        <div class="movie-grid">
+            <th:block th:each="movie : ${movies}">
+                <div class="movie-card">
+                    <img th:src="'https://image.tmdb.org/t/p/w500/' + ${movie.posterPath}" th:alt="${movie.title}">
+                    <div class="movie-info">
+                        <h3 class="movie-title" th:text="${movie.title}"></h3>
+                        <div class="movie-meta">
+                            <span th:text="${#dates.format(movie.releaseDate, 'yyyy')}"></span>
+                            <span th:text="${movie.voteAverage + ' ⭐'}"></span>
+                        </div>
+                        <div class="movie-actions">
+<button
+                            <button th:onclick="'window.location.href=\'/booking?movieId=' + ${movie.id} + '\''">Đặt vé</button>
+                        </div>
+                    </div>
+                </div>
+            </th:block>
+        </div>
+    </main>
+
+    <script src="/js/index.js"></script>
+</body>
+</html>

@@ -1,0 +1,312 @@
+<!DOCTYPE html>
+<html lang="vi">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Trang Phim</title>
+    <style>
+        * {
+            margin: 0;
+            padding: 0;
+            box-sizing: border-box;
+        }
+
+        body {
+            font-family: Arial, sans-serif;
+            background-color: #1a1a1a;
+            color: #ffffff;
+        }
+
+        .container {
+            max-width: 1200px;
+            margin: 0 auto;
+            padding: 20px;
+        }
+
+        .movie-grid {
+            display: grid;
+            grid-template-columns: repeat(auto-fill, minmax(200px, 1fr));
+            gap: 20px;
+            margin-top: 20px;
+        }
+
+        .movie-card {
+            background-color: #2d2d2d;
+            border-radius: 8px;
+            overflow: hidden;
+            transition: transform 0.3s;
+        }
+
+        .movie-card:hover {
+            transform: translateY(-5px);
+        }
+
+        .movie-card img {
+            width: 100%;
+            height: 300px;
+            object-fit: cover;
+        }
+
+        .movie-info {
+            padding: 15px;
+        }
+
+        .movie-title {
+            font-size: 16px;
+            margin-bottom: 8px;
+        }
+
+        .movie-meta {
+            font-size: 14px;
+            color: #888;
+        }
+
+        header {
+            background-color: #2d2d2d;
+            padding: 15px 0;
+            margin-bottom: 20px;
+        }
+
+        .search-bar {
+            max-width: 500px;
+            margin: 0 auto;
+        }
+
+        .search-bar input {
+            width: 100%;
+            padding: 10px;
+            border-radius: 5px;
+            border: none;
+            background-color: #404040;
+            color: #ffffff;
+        }
+
+        /* Thêm styles cho modal */
+        .modal {
+            display: none;
+            position: fixed;
+            top: 0;
+            left: 0;
+            width: 100%;
+            height: 100%;
+            background-color: rgba(0, 0, 0, 0.9);
+            z-index: 1000;
+        }
+
+        .modal-content {
+            position: relative;
+            width: 90%;
+            max-width: 800px;
+            margin: 50px auto;
+        }
+
+        .close-modal {
+            position: absolute;
+            right: -30px;
+            top: -30px;
+            color: white;
+            font-size: 30px;
+            cursor: pointer;
+        }
+
+        .trailer-wrapper {
+            position: relative;
+            padding-bottom: 56.25%;
+            height: 0;
+        }
+
+        .trailer-wrapper iframe {
+            position: absolute;
+            top: 0;
+            left: 0;
+            width: 100%;
+            height: 100%;
+        }
+    </style>
+</head>
+<body>
+    <header>
+        <div class="container">
+            <nav class="nav-menu">
+                <div class="logo">
+                    <a href="/">MovieTime</a>
+                </div>
+                <ul class="menu-items">
+                    <li><a href="/">Trang Chủ</a></li>
+                    <li class="dropdown">
+                        <a href="#">Thể Loại</a>
+                        <div class="dropdown-content" id="genreDropdown">
+                            <!-- Will be populated by JavaScript -->
+                        </div>
+                    </li>
+                    <li><a href="/upcoming">Sắp Chiếu</a></li>
+                    <li><a href="/top-rated">Phim Hay</a></li>
+                    <li class="dropdown">
+                        <a href="#">Diễn Viên</a>
+                        <div class="dropdown-content" id="actorsDropdown">
+                            <!-- Will be populated by JavaScript -->
+                        </div>
+                    </li>
+                </ul>
+            </nav>
+            <div class="search-bar">
+                <input type="text" placeholder="Tìm kiếm phim...">
+            </div>
+        </div>
+    </header>
+
+    <main class="container">
+        <div class="movie-grid">
+            <!-- Movie Card Example -->
+            <div class="movie-card">
+                <img src="https://via.placeholder.com/200x300" alt="Movie Poster">
+                <div class="movie-info">
+                    <h3 class="movie-title">Tên Phim</h3>
+                    <div class="movie-meta">
+                        <span>2023</span> • 
+                        <span>120 phút</span>
+                    </div>
+                </div>
+            </div>
+            <!-- More movie cards can be added here -->
+        </div>
+    </main>
+
+    <!-- Thêm modal cho trailer -->
+    <div id="trailerModal" class="modal">
+        <div class="modal-content">
+            <span class="close-modal">&times;</span>
+            <div class="trailer-wrapper">
+                <iframe id="trailerFrame" frameborder="0" allowfullscreen></iframe>
+            </div>
+        </div>
+    </div>
+
+    <script>
+        const API_KEY = 'affc26a2de5fd7c69d4c6f26a2f88d05';
+        const BASE_URL = 'https://api.themoviedb.org/3';
+        const IMAGE_BASE_URL = 'https://image.tmdb.org/t/p/w500';
+
+        // Hàm lấy danh sách phim phổ biến
+        async function getPopularMovies() {
+            try {
+                const response = await fetch(`${BASE_URL}/movie/popular?api_key=${API_KEY}&language=vi-VN`);
+                const data = await response.json();
+                displayMovies(data.results);
+            } catch (error) {
+                console.error('Lỗi khi lấy dữ liệu:', error);
+            }
+        }
+
+        // Hàm hiển thị danh sách phim
+        // Sửa hàm displayMovies để thêm nút xem trailer
+        function displayMovies(movies) {
+            const movieGrid = document.querySelector('.movie-grid');
+            movieGrid.innerHTML = '';
+
+            movies.forEach(movie => {
+                const movieCard = `
+                    <div class="movie-card">
+                        <img src="${IMAGE_BASE_URL}${movie.poster_path}" 
+                             alt="${movie.title}"
+                             onerror="this.src='https://via.placeholder.com/200x300'">
+                        <div class="movie-info">
+                            <h3 class="movie-title">${movie.title}</h3>
+                            <div class="movie-meta">
+                                <span>${new Date(movie.release_date).getFullYear()}</span> • 
+                                <span>${movie.vote_average.toFixed(1)} ⭐</span>
+                            </div>
+                            <div style="margin-top: 10px;">
+                                <button onclick="showTrailer(${movie.id})" style="margin-right: 10px;">Xem Trailer</button>
+                                <button onclick="window.location.href='/booking?movieId=${movie.id}'">Đặt vé</button>
+                            </div>
+                        </div>
+                    </div>
+                `;
+                movieGrid.innerHTML += movieCard;
+            });
+        }
+
+        // Thêm hàm hiển thị trailer
+        async function showTrailer(movieId) {
+            try {
+                // Thử tìm trailer tiếng Việt trước
+                let response = await fetch(`${BASE_URL}/movie/${movieId}/videos?api_key=${API_KEY}&language=vi-VN`);
+                let data = await response.json();
+                
+                let trailer = data.results.find(video => video.type === "Trailer");
+                
+                // Nếu không có trailer tiếng Việt, tìm trailer tiếng Anh
+                if (!trailer) {
+                    response = await fetch(`${BASE_URL}/movie/${movieId}/videos?api_key=${API_KEY}&language=en-US`);
+                    data = await response.json();
+                    trailer = data.results.find(video => video.type === "Trailer") || data.results[0];
+                }
+                
+                if (trailer) {
+                    const modal = document.getElementById('trailerModal');
+                    const trailerFrame = document.getElementById('trailerFrame');
+                    trailerFrame.src = `https://www.youtube.com/embed/${trailer.key}`;
+                    modal.style.display = 'block';
+                } else {
+                    alert('Không tìm thấy trailer cho phim này!');
+                }
+            } catch (error) {
+                console.error('Lỗi khi tải trailer:', error);
+            }
+        }
+
+        // Thêm xử lý đóng modal
+        const modal = document.getElementById('trailerModal');
+        const closeBtn = document.querySelector('.close-modal');
+
+        closeBtn.onclick = function() {
+            modal.style.display = 'none';
+            document.getElementById('trailerFrame').src = '';
+        }
+
+        window.onclick = function(event) {
+            if (event.target == modal) {
+                modal.style.display = 'none';
+                document.getElementById('trailerFrame').src = '';
+            }
+        }
+
+        // Thêm xử lý tìm kiếm phim
+        const searchInput = document.querySelector('.search-bar input');
+        searchInput.addEventListener('input', debounce(searchMovies, 500));
+
+        async function searchMovies(event) {
+            const searchTerm = event.target.value.trim();
+            if (searchTerm) {
+                try {
+                    const response = await fetch(
+                        `${BASE_URL}/search/movie?api_key=${API_KEY}&language=vi-VN&query=${searchTerm}`
+                    );
+                    const data = await response.json();
+                    displayMovies(data.results);
+                } catch (error) {
+                    console.error('Lỗi khi tìm kiếm:', error);
+                }
+            } else {
+                getPopularMovies();
+            }
+        }
+
+        function debounce(func, wait) {
+            let timeout;
+            return function executedFunction(...args) {
+                const later = () => {
+                    clearTimeout(timeout);
+                    func(...args);
+                };
+                clearTimeout(timeout);
+                timeout = setTimeout(later, wait);
+            };
+        }
+
+        // Khởi chạy ứng dụng - Thêm dòng này
+        getPopularMovies();
+    </script>
+</body>
+</html>

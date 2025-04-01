@@ -1,0 +1,42 @@
+<!DOCTYPE html>
+<html lang="vi">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Xác Nhận Đặt Vé</title>
+    <link rel="stylesheet" href="/css/booking-confirmation.css">
+</head>
+<body>
+    <div class="container">
+        <div class="confirmation-card">
+            <div class="success-icon">✓</div>
+            <h1>Đặt Vé Thành Công!</h1>
+            <div class="ticket-details">
+                <h2 id="movieTitle">Loading...</h2>
+                <div class="info-grid">
+                    <div class="info-item">
+                        <span class="label">Suất chiếu:</span>
+                        <span id="showtime" class="value"></span>
+                    </div>
+                    <div class="info-item">
+                        <span class="label">Số lượng vé:</span>
+                        <span id="seatCount" class="value"></span>
+                    </div>
+                    <div class="info-item">
+                        <span class="label">Tổng tiền:</span>
+                        <span id="totalAmount" class="value"></span>
+                    </div>
+                </div>
+                <div class="qr-code">
+                    <img id="qrCode" src="" alt="QR Code">
+                </div>
+            </div>
+            <div class="actions">
+                <button onclick="window.location.href='/'">Về Trang Chủ</button>
+                <button onclick="window.print()">In Vé</button>
+            </div>
+        </div>
+    </div>
+    <script src="/js/booking-confirmation.js"></script>
+</body>
+</html>

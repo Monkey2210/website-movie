@@ -1,0 +1,119 @@
+* {
+    margin: 0;
+    padding: 0;
+    box-sizing: border-box;
+}
+
+body {
+    font-family: Arial, sans-serif;
+    background-color: #1a1a1a;
+    color: #ffffff;
+    line-height: 1.6;
+}
+
+.container {
+    max-width: 1200px;
+    margin: 0 auto;
+    padding: 20px;
+}
+
+.movie-info-section {
+    margin-bottom: 40px;
+}
+
+.trailer-container {
+    margin-bottom: 30px;
+}
+
+.video-wrapper {
+    position: relative;
+    padding-bottom: 56.25%;
+    height: 0;
+    border-radius: 10px;
+    overflow: hidden;
+}
+
+.video-wrapper iframe {
+    position: absolute;
+    top: 0;
+    left: 0;
+    width: 100%;
+    height: 100%;
+}
+
+.movie-details {
+    padding: 20px;
+    background-color: #2d2d2d;
+    border-radius: 10px;
+}
+
+.movie-details h1 {
+    margin-bottom: 15px;
+    color: #fff;
+}
+
+.overview {
+    margin-bottom: 20px;
+    color: #ccc;
+}
+
+.meta-info {
+    display: flex;
+    gap: 20px;
+    color: #888;
+}
+
+.booking-section {
+    background-color: #2d2d2d;
+    padding: 30px;
+    border-radius: 10px;
+}
+
+.booking-section h2 {
+    margin-bottom: 25px;
+    color: #fff;
+}
+
+.form-group {
+    margin-bottom: 20px;
+}
+
+label {
+    display: block;
+    margin-bottom: 8px;
+    color: #ccc;
+}
+
+input, select {
+    width: 100%;
+    padding: 12px;
+    border: 1px solid #404040;
+    background-color: #404040;
+    color: #fff;
+    border-radius: 5px;
+}
+
+input:focus, select:focus {
+    outline: none;
+    border-color: #666;
+}
+
+input[readonly] {
+    background-color: #363636;
+}
+
+.submit-btn {
+    width: 100%;
+    padding: 15px;
+    background-color: #e50914;
+    color: white;
+    border: none;
+    border-radius: 5px;
+    cursor: pointer;
+    font-size: 16px;
+    transition: background-color 0.3s;
+}
+
+.submit-btn:hover {
+    background-color: #f40612;
+}
