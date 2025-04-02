@@ -1,63 +1,205 @@
 <!DOCTYPE html>
-<html lang="en">
+<html xmlns:th="http://www.thymeleaf.org">
 <head>
     <meta charset="UTF-8">
-    <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <link rel="stylesheet" href="/css/styles.css">
     <title>Movie List</title>
+    <link href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.0/dist/css/bootstrap.min.css" rel="stylesheet">
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.0.0/css/all.min.css">
+    <style>
+        /* Hero section style */
+        .hero-section {
+            background: linear-gradient(rgba(0,0,0,0.7), rgba(0,0,0,0.7)), 
+                        url('https://assets.nflxext.com/ffe/siteui/vlv3/32c47234-8398-4a4f-a6b5-6803881d38bf/c0f30923-084c-4595-a3d1-5c7e3c0dac2e/VN-vi-20240122-popsignuptwoweeks-perspective_alpha_website_large.jpg');
+            background-size: cover;
+            background-position: center;
+            height: 60vh;
+            display: flex;
+            align-items: center;
+        }
+
+        /* Navigation style */
+        .navbar {
+            background: linear-gradient(to right, #1a1a1a, #333333);
+        }
+
+        /* Movie card styles */
+        .movie-card {
+            border: none;
+            border-radius: 8px;
+            overflow: hidden;
+            transition: all 0.3s ease;
+            background: #fff;
+            height: 100%;
+        }
+
+        .movie-card:hover {
+            transform: translateY(-10px);
+            box-shadow: 0 10px 20px rgba(0,0,0,0.2);
+        }
+
+        .card-img-wrapper {
+            position: relative;
+            overflow: hidden;
+            padding-top: 150%;
+        }
+
+        .card-img-top {
+            position: absolute;
+            top: 0;
+            left: 0;
+            width: 100%;
+            height: 100%;
+            object-fit: cover;
+            transition: transform 0.3s ease;
+        }
+
+        .movie-card:hover .card-img-top {
+            transform: scale(1.1);
+        }
+
+        .movie-overlay {
+            position: absolute;
+            bottom: 0;
+            left: 0;
+            right: 0;
+            background: linear-gradient(transparent, rgba(0,0,0,0.9));
+            padding: 20px;
+            opacity: 0;
+            transition: opacity 0.3s ease;
+            color: white;
+        }
+
+        .movie-card:hover .movie-overlay {
+            opacity: 1;
+        }
+
+        .rating-badge {
+            position: absolute;
+            top: 10px;
+            right: 10px;
+            background: rgba(255,215,0,0.9);
+            color: #000;
+            padding: 5px 10px;
+            border-radius: 20px;
+            font-weight: bold;
+        }
+
+        .btn-trailer {
+            background: #e50914;
+            color: white;
+            border: none;
+            transition: all 0.3s ease;
+        }
+
+        .btn-booking {
+            background: #1db954;
+            color: white;
+            border: none;
+            transition: all 0.3s ease;
+        }
+
+        .section-title {
+            position: relative;
+            margin-bottom: 40px;
+            padding-bottom: 15px;
+        }
+
+        .section-title::after {
+            content: '';
+            position: absolute;
+            bottom: 0;
+            left: 0;
+            width: 60px;
+            height: 3px;
+            background: #e50914;
+        }
+    </style>
 </head>
 <body>
-    <header>
+    <!-- Navigation Menu -->
+    <nav class="navbar navbar-expand-lg navbar-dark">
         <div class="container">
-            <nav class="nav-menu">
-                <div class="logo">
-                    <a href="/">MovieTime</a>
-                </div>
-                <ul class="menu-items">
-                    <li><a href="/">Trang Chủ</a></li>
-                    <li class="dropdown">
-                        <a href="#">Thể Loại</a>
-                        <div class="dropdown-content" id="genreDropdown">
-                            <!-- Will be populated by JavaScript -->
-                        </div>
+            <a class="navbar-brand" href="/"><i class="fas fa-film me-2"></i>Movie Website</a>
+            <button class="navbar-toggler" type="button" data-bs-toggle="collapse" data-bs-target="#navbarNav">
+                <span class="navbar-toggler-icon"></span>
+            </button>
+            <div class="collapse navbar-collapse" id="navbarNav">
+                <ul class="navbar-nav me-auto">
+                    <li class="nav-item">
+                        <a class="nav-link active" href="/"><i class="fas fa-home me-1"></i>Trang Chủ</a>
                     </li>
-                    <li><a href="/upcoming">Sắp Chiếu</a></li>
-                    <li><a href="/top-rated">Phim Hay</a></li>
-                    <li class="dropdown">
-                        <a href="#">Diễn Viên</a>
-                        <div class="dropdown-content" id="actorsDropdown">
-                            <!-- Will be populated by JavaScript -->
-                        </div>
+                    <li class="nav-item" th:if="${session.loggedInUser != null}">
+                        <a class="nav-link" href="/bookings"><i class="fas fa-ticket-alt me-1"></i>Đặt Chỗ Của Tôi</a>
                     </li>
                 </ul>
-            </nav>
-            <div class="search-bar">
-                <input type="text" placeholder="Tìm kiếm phim...">
+                <div class="navbar-nav" th:if="${session.loggedInUser == null}">
+                    <a class="nav-link" href="/login"><i class="fas fa-sign-in-alt me-1"></i>Đăng Nhập</a>
+                    <a class="nav-link" href="/register"><i class="fas fa-user-plus me-1"></i>Đăng Ký</a>
+                </div>
+                <div class="navbar-nav" th:if="${session.loggedInUser != null}">
+                    <span class="nav-link">
+                        <i class="fas fa-user me-1"></i>
+                        Xin chào, <span th:text="${session.loggedInUser.username}"></span>
+                    </span>
+                    <a class="nav-link" href="/logout"><i class="fas fa-sign-out-alt me-1"></i>Đăng Xuất</a>
+                </div>
             </div>
         </div>
-    </header>
+    </nav>
 
-    <main class="container">
-        <div class="movie-grid">
-            <th:block th:each="movie : ${movies}">
+    <!-- Hero Section -->
+    <div class="hero-section">
+        <div class="container text-center">
+            <h1 class="display-4">Khám Phá Thế Giới Điện Ảnh</h1>
+            <p class="lead">Đặt vé xem phim yêu thích của bạn ngay hôm nay</p>
+        </div>
+    </div>
+
+    <!-- Movie List Section -->
+    <div class="container mt-5">
+        <h2 class="section-title">Phim Đang Chiếu</h2>
+        <div class="row g-4">
+            <div th:each="movie : ${movies}" class="col-md-3">
                 <div class="movie-card">
-                    <img th:src="'https://image.tmdb.org/t/p/w500/' + ${movie.posterPath}" th:alt="${movie.title}">
-                    <div class="movie-info">
-                        <h3 class="movie-title" th:text="${movie.title}"></h3>
-                        <div class="movie-meta">
-                            <span th:text="${#dates.format(movie.releaseDate, 'yyyy')}"></span>
-                            <span th:text="${movie.voteAverage + ' ⭐'}"></span>
+                    <div class="card-img-wrapper">
+                        <img th:if="${movie.posterPath}" 
+                             th:src="@{'https://image.tmdb.org/t/p/w500' + ${movie.posterPath}}"
+                             class="card-img-top" alt="Movie Poster">
+                        <div class="rating-badge">
+                            <i class="fas fa-star"></i>
+                            <span th:text="${movie.voteAverage}">Rating</span>
                         </div>
-                        <div class="movie-actions">
-<button
-                            <button th:onclick="'window.location.href=\'/booking?movieId=' + ${movie.id} + '\''">Đặt vé</button>
+                        <div class="movie-overlay">
+                            <h6 class="mb-2" th:text="${movie.title}">Movie Title</h6>
+                            <p class="small mb-0">
+                                <i class="far fa-calendar-alt me-2"></i>
+                                <span th:text="${#dates.format(movie.releaseDate, 'dd-MM-yyyy')}">Release Date</span>
+                            </p>
+                        </div>
+                    </div>
+                    <div class="card-body">
+                        <h5 class="card-title" th:text="${movie.title}">Movie Title</h5>
+                        <div class="d-grid gap-2">
+                            <button class="btn btn-trailer" onclick="watchTrailer(this)" th:data-movie-id="${movie.id}">
+                                <i class="fas fa-play me-2"></i>Xem Trailer
+                            </button>
+                            <a th:href="@{'/booking/' + ${movie.id}}" class="btn btn-booking">
+                                <i class="fas fa-ticket-alt me-2"></i>Mua Vé
+                            </a>
                         </div>
                     </div>
                 </div>
-            </th:block>
+            </div>
         </div>
-    </main>
+    </div>
 
-    <script src="/js/index.js"></script>
+    <!-- Bootstrap JS -->
+    <script src="https://cdn.jsdelivr.net/npm/bootstrap@5.3.0/dist/js/bootstrap.bundle.min.js"></script>
+    <script>
+        function watchTrailer(button) {
+            const movieId = button.getAttribute('data-movie-id');
+            alert('Chức năng xem trailer sẽ được cập nhật sớm! ID phim: ' + movieId);
+        }
+    </script>
 </body>
 </html>

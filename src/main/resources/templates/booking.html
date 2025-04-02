@@ -1,67 +1,185 @@
 <!DOCTYPE html>
-<html lang="vi">
+<html xmlns:th="http://www.thymeleaf.org">
 <head>
     <meta charset="UTF-8">
-    <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>Đặt Vé Xem Phim</title>
-    <link rel="stylesheet" href="/css/booking.css">
+    <title>Đặt Vé - Movie Website</title>
+    <link href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.0/dist/css/bootstrap.min.css" rel="stylesheet">
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.0.0/css/all.min.css">
+    <style>
+        .movie-details {
+            background: linear-gradient(rgba(0,0,0,0.8), rgba(0,0,0,0.8));
+            color: white;
+            padding: 50px 0;
+        }
+        .movie-poster {
+            max-height: 400px;
+            object-fit: cover;
+            border-radius: 10px;
+        }
+        .seat {
+            width: 40px;
+            height: 40px;
+            margin: 5px;
+            border: 2px solid #ccc;
+            border-radius: 5px;
+            cursor: pointer;
+        }
+        .seat.selected {
+            background-color: #2ecc71;
+            border-color: #27ae60;
+        }
+        .seat.occupied {
+            background-color: #e74c3c;
+            border-color: #c0392b;
+            cursor: not-allowed;
+        }
+        .screen {
+            background: #ccc;
+            height: 10px;
+            border-radius: 5px;
+            margin: 30px 0;
+            box-shadow: 0 0 10px rgba(255,255,255,0.5);
+        }
+    </style>
 </head>
 <body>
-    <div class="container">
-        <div class="movie-info-section">
-            <div class="trailer-container">
-                <div class="video-wrapper">
-                    <iframe id="trailerFrame" frameborder="0" allowfullscreen></iframe>
-                </div>
-            </div>
-            <div class="movie-details">
-                <h1 id="movieTitle">Đang tải thông tin phim...</h1>
-                <p id="movieOverview" class="overview"></p>
-                <div class="meta-info">
-                    <span id="releaseDate"></span>
-                    <span id="runtime"></span>
-                    <span id="rating"></span>
-                </div>
+    <!-- Navigation Menu -->
+    <nav class="navbar navbar-expand-lg navbar-dark bg-dark">
+        <div class="container">
+            <a class="navbar-brand" href="/"><i class="fas fa-film me-2"></i>Movie Website</a>
+            <div class="collapse navbar-collapse">
+                <ul class="navbar-nav ms-auto">
+                    <li class="nav-item">
+                        <a class="nav-link" href="/"><i class="fas fa-home me-1"></i>Trang Chủ</a>
+                    </li>
+                </ul>
             </div>
         </div>
+    </nav>
 
-        <div class="booking-section">
-            <h2>Đặt Vé</h2>
-            <form id="bookingForm" action="/book" method="POST">
-                <input type="hidden" id="movieId" name="movieId">
-                
-                <div class="form-group">
-                    <label for="showtime">Chọn Suất Chiếu:</label>
-                    <input type="datetime-local" id="showtime" name="showtime" required>
+    <!-- Movie Details -->
+    <div class="movie-details">
+        <div class="container">
+            <div class="row">
+                <div class="col-md-4">
+                    <img th:if="${movie.posterPath}" 
+                         th:src="@{'https://image.tmdb.org/t/p/w500' + ${movie.posterPath}}"
+                         class="movie-poster img-fluid" alt="Movie Poster">
                 </div>
-
-                <div class="form-group">
-                    <label for="seats">Số Lượng Vé:</label>
-                    <select id="seats" name="seats" required>
-                        <option value="">Chọn số lượng</option>
-                        <option value="1">1 vé</option>
-                        <option value="2">2 vé</option>
-                        <option value="3">3 vé</option>
-                        <option value="4">4 vé</option>
-                        <option value="5">5 vé</option>
-                    </select>
+                <div class="col-md-8">
+                    <div class="movie-info">
+                        <h1 class="display-4 mb-4" th:text="${movie.title}">Movie Title</h1>
+                        <div class="movie-meta">
+                            <p class="lead">
+                                <i class="far fa-calendar-alt me-2"></i>
+                                Ngày Chiếu: <span th:text="${#dates.format(movie.releaseDate, 'dd-MM-yyyy')}">Release Date</span>
+                            </p>
+                            <p class="lead">
+                                <i class="fas fa-star me-2 text-warning"></i>
+                                Đánh Giá: <span th:text="${movie.voteAverage}">Đánh Giá</span>/10
+                            </p>
+                        </div>
+                    </div>
                 </div>
-
-                <div class="form-group">
-                    <label for="price">Giá Vé:</label>
-                    <input type="number" id="price" name="price" readonly>
-                </div>
-
-                <div class="form-group">
-                    <label for="total">Tổng Tiền:</label>
-                    <input type="text" id="total" readonly>
-                </div>
-
-                <button type="submit" class="submit-btn">Xác Nhận Đặt Vé</button>
-            </form>
+            </div>
         </div>
     </div>
 
-    <script src="/js/booking.js"></script>
+    <!-- Thêm style mới -->
+    <style>
+        .movie-details {
+            background: linear-gradient(rgba(0,0,0,0.8), rgba(0,0,0,0.8));
+            color: white;
+            padding: 50px 0;
+        }
+        .movie-poster {
+            max-height: 500px;
+            object-fit: cover;
+            border-radius: 10px;
+            box-shadow: 0 0 20px rgba(0,0,0,0.5);
+        }
+        .movie-info {
+            padding: 20px;
+        }
+        .movie-meta {
+            margin-top: 30px;
+        }
+        .lead {
+            font-size: 1.2rem;
+            margin-bottom: 15px;
+        }
+        .display-4 {
+            font-weight: 600;
+            font-size: 2.5rem;
+        }
+    </style>
+
+    <!-- Booking Section -->
+    <div class="container my-5">
+        <h3 class="text-center mb-4">Chọn Ghế</h3>
+        <div class="screen"></div>
+        <div class="text-center" id="seating-plan">
+            <!-- Seats will be generated by JavaScript -->
+        </div>
+        <div class="mt-4 text-center">
+            <p>Ghế đã chọn: <span id="selected-seats"></span></p>
+            <p>Tổng tiền: <span id="total-price">0</span> VND</p>
+            <button class="btn btn-success" onclick="confirmBooking()">
+                <i class="fas fa-ticket-alt me-2"></i>Xác Nhận Đặt Vé
+            </button>
+        </div>
+    </div>
+
+    <script src="https://cdn.jsdelivr.net/npm/bootstrap@5.3.0/dist/js/bootstrap.bundle.min.js"></script>
+    <script>
+        const seatingPlan = document.getElementById('seating-plan');
+        const selectedSeatsElement = document.getElementById('selected-seats');
+        const totalPriceElement = document.getElementById('total-price');
+        const PRICE_PER_SEAT = 90000; // 90,000 VND per seat
+        let selectedSeats = [];
+
+        // Generate seats
+        for (let row = 0; row < 5; row++) {
+            const rowDiv = document.createElement('div');
+            for (let col = 0; col < 8; col++) {
+                const seat = document.createElement('button');
+                seat.className = 'seat';
+                seat.dataset.row = String.fromCharCode(65 + row);
+                seat.dataset.col = col + 1;
+                seat.onclick = () => toggleSeat(seat);
+                rowDiv.appendChild(seat);
+            }
+            seatingPlan.appendChild(rowDiv);
+        }
+
+        function toggleSeat(seat) {
+            if (seat.classList.contains('occupied')) return;
+            
+            seat.classList.toggle('selected');
+            const seatId = `${seat.dataset.row}${seat.dataset.col}`;
+            
+            if (seat.classList.contains('selected')) {
+                selectedSeats.push(seatId);
+            } else {
+                selectedSeats = selectedSeats.filter(id => id !== seatId);
+            }
+            
+            updateSelection();
+        }
+
+        function updateSelection() {
+            selectedSeatsElement.textContent = selectedSeats.join(', ');
+            totalPriceElement.textContent = (selectedSeats.length * PRICE_PER_SEAT).toLocaleString('vi-VN');
+        }
+
+        function confirmBooking() {
+            if (selectedSeats.length === 0) {
+                alert('Vui lòng chọn ít nhất một ghế!');
+                return;
+            }
+            // TODO: Implement booking confirmation
+            alert('Chức năng đặt vé sẽ được cập nhật sớm!');
+        }
+    </script>
 </body>
 </html>

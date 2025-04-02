@@ -9,7 +9,6 @@ async function loadMovieDetails() {
     if (movieId) {
         document.getElementById('movieId').value = movieId;
         try {
-            // Lấy thông tin phim
             const response = await fetch(
                 `${BASE_URL}/movie/${movieId}?api_key=${API_KEY}&language=vi-VN`
             );
@@ -22,8 +21,8 @@ async function loadMovieDetails() {
             document.getElementById('runtime').textContent = `${movie.runtime} phút`;
             document.getElementById('rating').textContent = `⭐ ${movie.vote_average.toFixed(1)}`;
             
-            // Tải trailer
-            await loadTrailer(movieId);
+            // Hiển thị poster thay vì trailer
+            document.getElementById('moviePoster').src = `https://image.tmdb.org/t/p/w500${movie.poster_path}`;
             
             // Set giá vé cơ bản
             document.getElementById('price').value = BASE_PRICE;
@@ -34,27 +33,7 @@ async function loadMovieDetails() {
     }
 }
 
-async function loadTrailer(movieId) {
-    try {
-        let response = await fetch(`${BASE_URL}/movie/${movieId}/videos?api_key=${API_KEY}&language=vi-VN`);
-        let data = await response.json();
-        
-        let trailer = data.results.find(video => video.type === "Trailer");
-        
-        if (!trailer) {
-            response = await fetch(`${BASE_URL}/movie/${movieId}/videos?api_key=${API_KEY}&language=en-US`);
-            data = await response.json();
-            trailer = data.results.find(video => video.type === "Trailer") || data.results[0];
-        }
-        
-        if (trailer) {
-            const trailerFrame = document.getElementById('trailerFrame');
-            trailerFrame.src = `https://www.youtube.com/embed/${trailer.key}`;
-        }
-    } catch (error) {
-        console.error('Lỗi khi tải trailer:', error);
-    }
-}
+// Remove loadTrailer function since we don't need it anymore
 
 // Tính tổng tiền khi thay đổi số lượng vé
 document.getElementById('seats').addEventListener('change', function(e) {
@@ -76,13 +55,16 @@ document.getElementById('bookingForm').addEventListener('submit', async function
     const formData = {
         movieId: document.getElementById('movieId').value,
         movieTitle: document.getElementById('movieTitle').textContent,
+        customerName: document.getElementById('customerName').value,
+        customerEmail: document.getElementById('customerEmail').value,
+        customerPhone: document.getElementById('customerPhone').value,
         showtime: document.getElementById('showtime').value,
         seats: document.getElementById('seats').value,
-        total: document.getElementById('total').value
+        total: document.getElementById('total').value.replace(/[^0-9]/g, '')
     };
 
     try {
-        const response = await fetch('/process-booking', {  // Đổi từ /book thành /process-booking
+        const response = await fetch('/process-booking', {
             method: 'POST',
             headers: {
                 'Content-Type': 'application/json',

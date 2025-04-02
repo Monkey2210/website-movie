@@ -42,9 +42,23 @@ body {
 }
 
 .movie-details {
-    padding: 20px;
-    background-color: #2d2d2d;
-    border-radius: 10px;
+    display: flex;
+    gap: 2rem;
+    margin-bottom: 2rem;
+}
+
+.movie-poster {
+    flex-shrink: 0;
+}
+
+.movie-poster img {
+    width: 300px;
+    border-radius: 8px;
+    box-shadow: 0 4px 8px rgba(0,0,0,0.2);
+}
+
+.movie-info {
+    flex-grow: 1;
 }
 
 .movie-details h1 {

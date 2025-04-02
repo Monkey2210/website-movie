@@ -1,23 +1,27 @@
 package com.example.movie.Controller;
 
+import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Controller;
+import org.springframework.ui.Model;
 import org.springframework.web.bind.annotation.GetMapping;
-import org.springframework.web.bind.annotation.PostMapping;
-import org.springframework.web.bind.annotation.RequestBody;
-import org.springframework.web.bind.annotation.ResponseBody;
+import org.springframework.web.bind.annotation.PathVariable;
+
+import com.example.movie.Model.Movie;
+import com.example.movie.Service.MovieService;
 
 @Controller
 public class BookingController {
 
-    @GetMapping("/booking-confirmation")
-    public String showConfirmation() {
-        return "booking-confirmation";
-    }
+    @Autowired
+    private MovieService movieService;
 
-    @PostMapping("/process-booking")  // Đổi từ /book thành /process-booking
-    @ResponseBody
-    public String processBooking() {
-        // Xử lý logic đặt vé ở đây
-        return "success";
+    @GetMapping("/booking/{movieId}")
+    public String showBookingPage(@PathVariable Long movieId, Model model) {
+        Movie movie = movieService.getMovieById(movieId);
+        if (movie == null) {
+            return "redirect:/";
+        }
+        model.addAttribute("movie", movie);
+        return "booking";
     }
 }

@@ -4,29 +4,32 @@ import jakarta.persistence.Entity;
 import jakarta.persistence.GeneratedValue;
 import jakarta.persistence.GenerationType;
 import jakarta.persistence.Id;
+import jakarta.persistence.JoinColumn;
+import jakarta.persistence.ManyToOne;
+import jakarta.persistence.Table;
 
 @Entity
+@Table(name = "ticket")
 public class Ticket {
-
     @Id
     @GeneratedValue(strategy = GenerationType.IDENTITY)
     private Long id;
-
-    private Long movieId;
-    private String userId;
-    private String showtime;
+    
+    @ManyToOne
+    @JoinColumn(name = "booking_id")
+    private Booking booking;
+    
+    @ManyToOne
+    @JoinColumn(name = "movie_id")
+    private Movie movie;
+    
+    private String seatNumber;
     private Double price;
-
+    
+    // Constructor
     public Ticket() {}
-
-    public Ticket(Long movieId, String userId, String showtime, Double price) {
-        this.movieId = movieId;
-        this.userId = userId;
-        this.showtime = showtime;
-        this.price = price;
-    }
-
-    // Getter và Setter
+    
+    // Getters and Setters
     public Long getId() {
         return id;
     }
@@ -35,28 +38,20 @@ public class Ticket {
         this.id = id;
     }
 
-    public Long getMovieId() {
-        return movieId;
+    public Movie getMovie() {
+        return movie;
     }
 
-    public void setMovieId(Long movieId) {
-        this.movieId = movieId;
+    public void setMovie(Movie movie) {
+        this.movie = movie;
     }
 
-    public String getUserId() {
-        return userId;
+    public String getSeatNumber() {
+        return seatNumber;
     }
 
-    public void setUserId(String userId) {
-        this.userId = userId;
-    }
-
-    public String getShowtime() {
-        return showtime;
-    }
-
-    public void setShowtime(String showtime) {
-        this.showtime = showtime;
+    public void setSeatNumber(String seatNumber) {
+        this.seatNumber = seatNumber;
     }
 
     public Double getPrice() {
@@ -65,5 +60,13 @@ public class Ticket {
 
     public void setPrice(Double price) {
         this.price = price;
+    }
+
+    public Booking getBooking() {
+        return booking;
+    }
+    
+    public void setBooking(Booking booking) {
+        this.booking = booking;
     }
 }
