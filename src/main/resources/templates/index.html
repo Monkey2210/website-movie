@@ -1,5 +1,6 @@
 <!DOCTYPE html>
-<html xmlns:th="http://www.thymeleaf.org">
+<html xmlns:th="http://www.thymeleaf.org"
+      xmlns:sec="http://www.thymeleaf.org/thymeleaf-extras-springsecurity6">
 <head>
     <meta charset="UTF-8">
     <title>Movie List</title>
@@ -132,14 +133,14 @@
                         <a class="nav-link" href="/bookings"><i class="fas fa-ticket-alt me-1"></i>Đặt Chỗ Của Tôi</a>
                     </li>
                 </ul>
-                <div class="navbar-nav" th:if="${session.loggedInUser == null}">
+                <div class="navbar-nav" sec:authorize="isAnonymous()">
                     <a class="nav-link" href="/login"><i class="fas fa-sign-in-alt me-1"></i>Đăng Nhập</a>
                     <a class="nav-link" href="/register"><i class="fas fa-user-plus me-1"></i>Đăng Ký</a>
                 </div>
-                <div class="navbar-nav" th:if="${session.loggedInUser != null}">
+                <div class="navbar-nav" sec:authorize="isAuthenticated()">
                     <span class="nav-link">
                         <i class="fas fa-user me-1"></i>
-                        Xin chào, <span th:text="${session.loggedInUser.username}"></span>
+                        Xin chào, <span sec:authentication="name"></span>
                     </span>
                     <a class="nav-link" href="/logout"><i class="fas fa-sign-out-alt me-1"></i>Đăng Xuất</a>
                 </div>

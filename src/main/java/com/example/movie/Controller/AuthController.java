@@ -6,10 +6,11 @@ import org.springframework.ui.Model;
 import org.springframework.web.bind.annotation.GetMapping;
 import org.springframework.web.bind.annotation.PostMapping;
 import org.springframework.web.bind.annotation.RequestParam;
-import jakarta.servlet.http.HttpSession;  // Add this import
 
-import com.example.movie.Model.User;
+import com.example.movie.Model.User;  // Add this import
 import com.example.movie.Service.UserService;
+
+import jakarta.servlet.http.HttpSession;
 
 @Controller
 public class AuthController {
@@ -31,13 +32,14 @@ public class AuthController {
     public String registerUser(@RequestParam String username, 
                              @RequestParam String email,
                              @RequestParam String password,
+                             @RequestParam(required = false) boolean isAdmin,
                              Model model) {
         try {
             User user = new User();
             user.setUsername(username);
             user.setEmail(email);
-            user.setPassword(password);
-            user.setRole("USER");
+            user.setPassword(password);  // UserService will handle password encoding
+            user.setRole(isAdmin ? "ADMIN" : "USER");
             
             userService.registerUser(user);
             model.addAttribute("success", "Đăng ký thành công! Vui lòng đăng nhập.");
@@ -56,6 +58,11 @@ public class AuthController {
         if (userService.validateUser(username, password)) {
             User user = userService.findByUsername(username);
             session.setAttribute("loggedInUser", user);
+            
+            // Chuyển hướng dựa trên vai trò
+            if ("ADMIN".equals(user.getRole())) {
+                return "redirect:/admin/dashboard";
+            }
             return "redirect:/";
         } else {
             model.addAttribute("error", "Tên đăng nhập hoặc mật khẩu không đúng");

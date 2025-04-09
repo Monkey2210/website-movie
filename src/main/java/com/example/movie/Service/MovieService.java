@@ -52,6 +52,14 @@ public class MovieService {
                 String.class
             );
             
+            List<Movie> dbMovies = movieRepository.findAll();
+            
+            // If we have movies in database, return them
+            if (!dbMovies.isEmpty()) {
+                return dbMovies;
+            }
+            
+            // If database is empty, try to fetch from API
             if (response.getStatusCode() == HttpStatus.OK && response.getBody() != null) {
                 JSONObject jsonObject = new JSONObject(response.getBody());
                 JSONArray results = jsonObject.getJSONArray("results");
@@ -63,14 +71,6 @@ public class MovieService {
                         JSONObject movieJson = results.getJSONObject(i);
                         Movie movie = new Movie();
                         movie.setId(movieJson.getLong("id"));
-                        
-                        // Check if movie already exists
-                        Optional<Movie> existingMovie = movieRepository.findById(movie.getId());
-                        if (existingMovie.isPresent()) {
-                            movies.add(existingMovie.get());
-                            continue;
-                        }
-                        
                         movie.setTitle(movieJson.getString("title"));
                         movie.setPosterPath(movieJson.getString("poster_path"));
                         movie.setVoteAverage(movieJson.getDouble("vote_average"));
@@ -87,18 +87,13 @@ public class MovieService {
                     } catch (Exception e) {
                         System.err.println("Error processing movie: " + e.getMessage());
                         e.printStackTrace();
+                        continue; // Skip this movie and continue with next one
                     }
                 }
                 
                 if (!movies.isEmpty()) {
                     return movies;
                 }
-            }
-            
-            // If no movies from API, try database
-            List<Movie> dbMovies = movieRepository.findAll();
-            if (!dbMovies.isEmpty()) {
-                return dbMovies;
             }
             
         } catch (Exception e) {
@@ -127,6 +122,10 @@ public class MovieService {
     public Movie getMovieById(Long id) {
         Optional<Movie> movie = movieRepository.findById(id);
         return movie.orElse(null);
+    }
+
+    public long getMovieCount() {
+        return movieRepository.count();
     }
 }
 
