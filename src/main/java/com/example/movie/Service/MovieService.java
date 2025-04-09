@@ -37,8 +37,15 @@ public class MovieService {
 
     public List<Movie> getAllMovies() {
         try {
+            // First check and return data from database
+            List<Movie> dbMovies = movieRepository.findAll();
+            if (!dbMovies.isEmpty()) {
+                return dbMovies;
+            }
+
+            // If database is empty, call API to fetch data
             String url = BASE_URL + "/movie/popular?api_key=" + apiKey + "&language=vi-VN&page=1";
-            System.out.println("Calling TMDB API with URL: " + url);
+            System.out.println("Database empty, calling TMDB API with URL: " + url);
             
             HttpHeaders headers = new HttpHeaders();
             headers.setAccept(Arrays.asList(MediaType.APPLICATION_JSON));
@@ -52,14 +59,7 @@ public class MovieService {
                 String.class
             );
             
-            List<Movie> dbMovies = movieRepository.findAll();
-            
-            // If we have movies in database, return them
-            if (!dbMovies.isEmpty()) {
-                return dbMovies;
-            }
-            
-            // If database is empty, try to fetch from API
+            // Process API response
             if (response.getStatusCode() == HttpStatus.OK && response.getBody() != null) {
                 JSONObject jsonObject = new JSONObject(response.getBody());
                 JSONArray results = jsonObject.getJSONArray("results");

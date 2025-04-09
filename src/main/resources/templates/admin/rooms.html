@@ -1,0 +1,144 @@
+<!DOCTYPE html>
+<html xmlns:th="http://www.thymeleaf.org">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Quản Lý Phòng Chiếu</title>
+    <link href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.0/dist/css/bootstrap.min.css" rel="stylesheet">
+    <link href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.0.0/css/all.min.css" rel="stylesheet">
+    <style>
+        .sidebar {
+            min-height: 100vh;
+            background-color: #343a40;
+            padding-top: 20px;
+        }
+        .sidebar .nav-link {
+            color: #fff;
+            padding: 10px 20px;
+            margin: 5px 0;
+        }
+        .sidebar .nav-link:hover {
+            background-color: #495057;
+        }
+        .sidebar .nav-link i {
+            margin-right: 10px;
+        }
+        .main-content {
+            padding: 20px;
+        }
+    </style>
+</head>
+<body>
+    <div class="container-fluid">
+        <div class="row">
+            <!-- Sidebar -->
+            <nav class="col-md-3 col-lg-2 sidebar">
+                <div class="position-sticky">
+                    <h3 class="text-white text-center mb-4">Admin Panel</h3>
+                    <ul class="nav flex-column">
+                        <li class="nav-item">
+                            <a class="nav-link" href="/admin/movies">
+                                <i class="fas fa-film"></i> Quản Lý Phim
+                            </a>
+                        </li>
+                        <li class="nav-item">
+                            <a class="nav-link" href="/admin/showtimes">
+                                <i class="fas fa-clock"></i> Quản Lý Xuất Chiếu
+                            </a>
+                        </li>
+                        <li class="nav-item">
+                            <a class="nav-link active" href="/admin/rooms">
+                                <i class="fas fa-door-open"></i> Quản Lý Phòng
+                            </a>
+                        </li>
+                    </ul>
+                </div>
+            </nav>
+
+            <!-- Main Content -->
+            <main class="col-md-9 ms-sm-auto col-lg-10 px-md-4">
+                <div class="d-flex justify-content-between flex-wrap flex-md-nowrap align-items-center pt-3 pb-2 mb-3 border-bottom">
+                    <h1>Quản Lý Phòng Chiếu</h1>
+                    <button class="btn btn-primary" data-bs-toggle="modal" data-bs-target="#addRoomModal">
+                        <i class="fas fa-plus"></i> Thêm Phòng
+                    </button>
+                </div>
+
+                <!-- Rooms Table -->
+                <div class="table-responsive">
+                    <table class="table table-striped table-hover">
+                        <thead>
+                            <tr>
+                                <th>ID</th>
+                                <th>Tên Phòng</th>
+                                <th>Số Ghế</th>
+                                <th>Thao Tác</th>
+                            </tr>
+                        </thead>
+                        <tbody>
+                            <tr th:each="room : ${rooms}">
+                                <td th:text="${room.id}"></td>
+                                <td th:text="${room.name}"></td>
+                                <td th:text="${room.capacity}"></td>
+                                <td>
+                                    <button class="btn btn-sm btn-warning me-2" th:onclick="'editRoom(' + ${room.id} + ')'">
+                                        <i class="fas fa-edit"></i>
+                                    </button>
+                                    <button class="btn btn-sm btn-danger" th:onclick="'deleteRoom(' + ${room.id} + ')'">
+                                        <i class="fas fa-trash"></i>
+                                    </button>
+                                </td>
+                            </tr>
+                        </tbody>
+                    </table>
+                </div>
+
+                <!-- Add Room Modal -->
+                <div class="modal fade" id="addRoomModal" tabindex="-1">
+                    <div class="modal-dialog">
+                        <div class="modal-content">
+                            <div class="modal-header">
+                                <h5 class="modal-title">Thêm Phòng Mới</h5>
+                                <button type="button" class="btn-close" data-bs-dismiss="modal"></button>
+                            </div>
+                            <div class="modal-body">
+                                <form th:action="@{/admin/rooms/add}" method="post">
+                                    <div class="mb-3">
+                                        <label class="form-label">Tên Phòng</label>
+                                        <input type="text" class="form-control" name="name" required>
+                                    </div>
+                                    <div class="mb-3">
+                                        <label class="form-label">Số Ghế</label>
+                                        <input type="number" class="form-control" name="capacity" required>
+                                    </div>
+                                    <button type="submit" class="btn btn-primary">Thêm Phòng</button>
+                                </form>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+            </main>
+        </div>
+    </div>
+
+    <script src="https://cdn.jsdelivr.net/npm/bootstrap@5.3.0/dist/js/bootstrap.bundle.min.js"></script>
+    <script>
+        function editRoom(id) {
+            // Implement edit functionality
+            window.location.href = '/admin/rooms/edit/' + id;
+        }
+
+        function deleteRoom(id) {
+            if (confirm('Bạn có chắc chắn muốn xóa phòng này?')) {
+                fetch('/admin/rooms/delete/' + id, {
+                    method: 'DELETE'
+                }).then(response => {
+                    if (response.ok) {
+                        window.location.reload();
+                    }
+                });
+            }
+        }
+    </script>
+</body>
+</html>

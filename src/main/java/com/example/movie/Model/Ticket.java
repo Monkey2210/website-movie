@@ -23,6 +23,10 @@ public class Ticket {
     @JoinColumn(name = "movie_id")
     private Movie movie;
     
+    @ManyToOne
+    @JoinColumn(name = "show_time_id")
+    private ShowTime showTime;
+    
     private String seatNumber;
     private Double price;
     
@@ -68,5 +72,13 @@ public class Ticket {
     
     public void setBooking(Booking booking) {
         this.booking = booking;
+    }
+    
+    public ShowTime getShowTime() {
+        return showTime;
+    }
+    
+    public void setShowTime(ShowTime showTime) {
+        this.showTime = showTime;
     }
 }
